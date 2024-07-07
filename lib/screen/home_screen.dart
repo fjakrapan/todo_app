@@ -1,4 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,9 +11,31 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List todoList = [];
+  final String API_URL = 'https://jsonplaceholder.typicode.com/todos';
 
+  List todoList = [];
   final task = TextEditingController();
+
+  Future<List> fectTodoList() async {
+    final response = await http.get(Uri.parse(API_URL));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    fectTodoList().then((value) {
+      print(value);
+      setState(() {
+        todoList = value;
+      });
+    });
+  }
 
   void addTodo() {
     setState(() {
@@ -64,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: ListView.builder(
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(todoList[index]),
+                    title: Text(todoList[index]['title']),
                     trailing: IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () => deleteTodo(index),
