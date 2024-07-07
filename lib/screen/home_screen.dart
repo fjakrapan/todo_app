@@ -10,12 +10,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List todoList = [];
 
-  String task = "";
+  final task = TextEditingController();
 
   void addTodo() {
     setState(() {
-      todoList.add(task);
-      task = "";
+      todoList.add(task.value.text);
+      task.clear();
     });
   }
 
@@ -45,11 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       labelText: 'ที่ต้องทำ',
                     ),
                     keyboardType: TextInputType.text,
-                    onChanged: (value) {
-                      setState(() {
-                        task = value;
-                      });
-                    },
+                    controller: task,
                   ),
                   const SizedBox(
                     height: 20,
