@@ -11,7 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final String API_URL = 'https://jsonplaceholder.typicode.com/todos';
+  final String API_URL = 'http://127.0.0.1:5001/todos';
 
   List todoList = [];
   final task = TextEditingController();
@@ -37,10 +37,17 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void addTodo() {
-    setState(() {
-      todoList.add(task.value.text);
-      task.clear();
+  Future<void> createTodo() async {
+    final response = await http.post(
+      Uri.parse(API_URL),
+      headers: {'Content-Type': 'application/json;'},
+      body: {'title ': task.text},
+    ).then((value) {
+      fectTodoList().then((value) {
+        setState(() {
+          todoList = value;
+        });
+      });
     });
   }
 
@@ -76,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: 20,
                   ),
                   ElevatedButton(
-                    onPressed: addTodo,
+                    onPressed: () => createTodo(),
                     child: const Text('เพิ่ม'),
                   ),
                 ],
